@@ -20,4 +20,4 @@ python -u run.py \
   --batch_size 128 \
   --train_epochs 10 \
   --use_gpu 1 \
-  --gpu_type mps 
+  --gpu_type cuda 
