@@ -98,7 +98,7 @@ if __name__ == '__main__':
     parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
 
     # GPU
-    parser.add_argument('--use_gpu', type=bool, default=True, help='use gpu')
+    parser.add_argument('--use_gpu', type=int, default=1, help='use gpu')
     parser.add_argument('--gpu', type=int, default=0, help='gpu')
     parser.add_argument('--gpu_type', type=str, default='cuda', help='gpu type')  # cuda or mps
     parser.add_argument('--use_multi_gpu', action='store_true', help='use multiple gpus', default=False)
@@ -140,7 +140,17 @@ if __name__ == '__main__':
     # TimeXer
     parser.add_argument('--patch_len', type=int, default=16, help='patch length')
 
+    # EST
+    parser.add_argument('--num_layers', type=int, default=1, help='number of layers in EST')
+    parser.add_argument('--memory_units', type=int, default=4, help='number of memory units in EST')
+    parser.add_argument('--memory_dim', type=int, default=100, help='dimension of memory in EST')
+    parser.add_argument('--attention_dim', type=int, default=64, help='dimension of attention in EST')
+    parser.add_argument('--dropout_rate', type=float, default=0, help='dropout rate in EST')
+    parser.add_argument('--memory_connectivity', type=float, default=0.05, help='memory connectivity in EST')
+
+
     args = parser.parse_args()
+    print("USE GPU:", args.use_gpu)
     if torch.cuda.is_available() and args.use_gpu:
         args.device = torch.device('cuda:{}'.format(args.gpu))
         print('Using GPU')
