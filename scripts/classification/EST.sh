@@ -10,10 +10,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
@@ -30,10 +30,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
@@ -50,10 +50,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
@@ -70,10 +70,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
@@ -90,10 +90,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
@@ -110,10 +110,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
@@ -130,10 +130,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
@@ -150,10 +150,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
@@ -170,10 +170,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
@@ -190,10 +190,10 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 3 \
+  --num_layers 1 \
   --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --memory_dim 100 \
+  --d_model 64 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --des 'Exp' \
