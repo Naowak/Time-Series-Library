@@ -30,7 +30,7 @@ ARGS=(
 
 # Boucle pour lancer chaque instance du script avec les arguments correspondants
 for ((i=0; i<3; i++)); do
-    CUDA_VISIBLE_DEVICE=$i srun --exclusive --ntasks=1 --gpus=1 bash ${ARGS[i]} &
+    srun --exclusive --ntasks=1 --gpus=1 --export=ALL,CUDA_VISIBLE_DEVICES=$i bash ${ARGS[i]} &
 done
 
 wait
