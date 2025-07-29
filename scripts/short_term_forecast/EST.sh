@@ -11,10 +11,10 @@ python -u run.py \
   --model $model_name \
   --data m4 \
   --features M \
-  --num_layers 1 \
+  --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 100 \
-  --d_model 64 \
+  --memory_dim 128 \
+  --d_model 128 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --enc_in 1 \
@@ -34,10 +34,10 @@ python -u run.py \
   --model $model_name \
   --data m4 \
   --features M \
-  --num_layers 1 \
+  --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 100 \
-  --d_model 64 \
+  --memory_dim 128 \
+  --d_model 128 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --enc_in 1 \
@@ -57,10 +57,10 @@ python -u run.py \
   --model $model_name \
   --data m4 \
   --features M \
-  --num_layers 1 \
+  --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 100 \
-  --d_model 64 \
+  --memory_dim 128 \
+  --d_model 128 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --enc_in 1 \
@@ -80,10 +80,10 @@ python -u run.py \
   --model $model_name \
   --data m4 \
   --features M \
-  --num_layers 1 \
+  --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 100 \
-  --d_model 64 \
+  --memory_dim 128 \
+  --d_model 128 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --enc_in 1 \
@@ -103,10 +103,10 @@ python -u run.py \
   --model $model_name \
   --data m4 \
   --features M \
-  --num_layers 1 \
+  --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 100 \
-  --d_model 64 \
+  --memory_dim 128 \
+  --d_model 128 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --enc_in 1 \
@@ -126,10 +126,10 @@ python -u run.py \
   --model $model_name \
   --data m4 \
   --features M \
-  --num_layers 1 \
+  --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 100 \
-  --d_model 64 \
+  --memory_dim 128 \
+  --d_model 128 \
   --dropout 0 \
   --memory_connectivity 0.05 \
   --enc_in 1 \

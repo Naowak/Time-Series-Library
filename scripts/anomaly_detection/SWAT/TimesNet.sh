@@ -70,7 +70,7 @@ python -u run.py \
   --features M \
   --seq_len 100 \
   --pred_len 0 \
-  --d_model 64 \
+  --d_model 128 \
   --d_ff 64 \
   --e_layers 3 \
   --enc_in 51 \
@@ -150,7 +150,7 @@ python -u run.py \
   --features M \
   --seq_len 100 \
   --pred_len 0 \
-  --d_model 64 \
+  --d_model 128 \
   --d_ff 64 \
   --e_layers 2 \
   --enc_in 51 \
