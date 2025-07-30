@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 tsl_venv/
+run_*/
 
 # C extensions
 *.so
