@@ -14,12 +14,12 @@ python -u run.py \
   --seq_len 96 \
   --label_len 48 \
   --pred_len 96 \
-  --num_layers 2 \
-  --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --num_layers 4 \
+  --memory_units 8 \
+  --memory_dim 64 \
+  --d_model 32 \
   --dropout 0 \
-  --memory_connectivity 0.05 \
+  --memory_connectivity 0.2 \
   --enc_in 8 \
   --dec_in 8 \
   --c_out 8 \
@@ -38,12 +38,12 @@ python -u run.py \
   --seq_len 96 \
   --label_len 48 \
   --pred_len 192 \
-  --num_layers 2 \
-  --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --num_layers 4 \
+  --memory_units 8 \
+  --memory_dim 64 \
+  --d_model 32 \
   --dropout 0 \
-  --memory_connectivity 0.05 \
+  --memory_connectivity 0.2 \
   --enc_in 8 \
   --dec_in 8 \
   --c_out 8 \
@@ -62,12 +62,12 @@ python -u run.py \
   --seq_len 96 \
   --label_len 48 \
   --pred_len 336 \
-  --num_layers 2 \
-  --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --num_layers 4 \
+  --memory_units 8 \
+  --memory_dim 64 \
+  --d_model 32 \
   --dropout 0 \
-  --memory_connectivity 0.05 \
+  --memory_connectivity 0.2 \
   --enc_in 8 \
   --dec_in 8 \
   --c_out 8 \
@@ -87,12 +87,12 @@ python -u run.py \
   --seq_len 96 \
   --label_len 48 \
   --pred_len 720 \
-  --num_layers 2 \
-  --memory_units 4 \
-  --memory_dim 128 \
-  --d_model 128 \
+  --num_layers 4 \
+  --memory_units 8 \
+  --memory_dim 64 \
+  --d_model 32 \
   --dropout 0 \
-  --memory_connectivity 0.05 \
+  --memory_connectivity 0.2 \
   --enc_in 8 \
   --dec_in 8 \
   --c_out 8 \

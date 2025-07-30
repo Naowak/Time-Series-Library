@@ -66,7 +66,7 @@ python -u run.py \
   --dec_in 1 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 128 \
+  --d_model 32 \
   --d_ff 64 \
   --top_k 5 \
   --des 'Exp' \
