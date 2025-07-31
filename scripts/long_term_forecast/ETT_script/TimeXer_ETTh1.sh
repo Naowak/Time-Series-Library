@@ -43,7 +43,7 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --des 'Exp' \
-  --d_model 128 \
+  --d_model 16 \
   --batch_size 4 \
   --itr 1
 
