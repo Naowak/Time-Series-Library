@@ -20,7 +20,7 @@ python -u run.py \
   --enc_in 21 \
   --dec_in 21 \
   --c_out 21 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 32 \
   --top_k 5 \
   --des 'Exp' \
@@ -44,7 +44,7 @@ python -u run.py \
   --enc_in 21 \
   --dec_in 21 \
   --c_out 21 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 32 \
   --top_k 5 \
   --des 'Exp' \
@@ -70,7 +70,7 @@ python -u run.py \
   --enc_in 21 \
   --dec_in 21 \
   --c_out 21 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 32 \
   --top_k 5 \
   --des 'Exp' \
@@ -94,7 +94,7 @@ python -u run.py \
   --enc_in 21 \
   --dec_in 21 \
   --c_out 21 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 32 \
   --top_k 5 \
   --des 'Exp' \

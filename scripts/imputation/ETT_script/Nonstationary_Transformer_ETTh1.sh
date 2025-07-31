@@ -22,7 +22,7 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 128 \
   --des 'Exp' \
   --itr 1 \
@@ -51,7 +51,7 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 128 \
   --des 'Exp' \
   --itr 1 \
@@ -80,7 +80,7 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 128 \
   --des 'Exp' \
   --itr 1 \
@@ -109,7 +109,7 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 128 \
   --des 'Exp' \
   --itr 1 \

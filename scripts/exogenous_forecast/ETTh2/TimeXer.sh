@@ -20,7 +20,7 @@ python -u run.py \
   --enc_in 7 \
   --dec_in 7 \
   --c_out 7 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 128 \
   --batch_size 128 \
   --des $des \
@@ -43,7 +43,7 @@ python -u run.py \
   --enc_in 7 \
   --dec_in 7 \
   --c_out 7 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 512 \
   --batch_size 128 \
   --des $des \
@@ -66,7 +66,7 @@ python -u run.py \
   --enc_in 7 \
   --dec_in 7 \
   --c_out 7 \
-  --d_model 32 \
+  --d_model 128 \
   --d_ff 256 \
   --batch_size 16 \
   --des $des \
