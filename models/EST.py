@@ -59,16 +59,17 @@ class Model(nn.Module):
         for layer in self.est_layers:
             layer._define_model()
     
-    def _est_forward_pass(self, x, normalize=False):
+    def _est_forward_pass(self, x, normalize=False, steps=0):
         """
         Core EST forward pass - shared by all tasks
         
         Args:
             x: Input tensor [B, L, D] 
             normalize: Whether to apply normalization (for forecasting)
+            steps: Number of autoregressive prediction steps (0 = no autoregression)
             
         Returns:
-            x_out: Processed tensor [B, L, D]
+            x_out: Processed tensor [B, L+steps, D]
             normalization_params: (mean, std) if normalize=True, else (None, None)
         """
         batch_size, seq_len, _ = x.shape
@@ -92,9 +93,12 @@ class Model(nn.Module):
         
         # === Sequential Processing through EST Layers ===
         outputs = []
+        current_x = x
+        
+        # Process original sequence
         for t in range(seq_len):
             # Get current timestep
-            x_t = self.fc_in_dropout(x[:, t, :])  # [B, D]
+            x_t = self.fc_in_dropout(current_x[:, t, :])  # [B, D]
             
             # Process through all EST layers
             new_states = []
@@ -106,12 +110,40 @@ class Model(nn.Module):
             states = torch.stack(new_states, dim=1)
             outputs.append(x_t)
         
+        # === Autoregressive Prediction ===
+        if steps > 0:
+            for step in range(steps):
+                # Use last output as input for next prediction
+                last_output = outputs[-1]  # [B, D]
+                
+                # Project to get next input (if needed)
+                next_input = self.projection(last_output)  # [B, c_out]
+                
+                # Re-embed the prediction for next step
+                if next_input.shape[-1] != self.attention_dim:
+                    # Need to re-embed if output dim != attention dim
+                    next_input_expanded = next_input.unsqueeze(1)  # [B, 1, c_out]
+                    next_embedded = self.embedding(next_input_expanded, None)  # [B, 1, D]
+                    next_x_t = self.fc_in_dropout(next_embedded.squeeze(1))  # [B, D]
+                else:
+                    next_x_t = self.fc_in_dropout(next_input)  # [B, D]
+                
+                # Process through all EST layers
+                new_states = []
+                for i, layer in enumerate(self.est_layers):
+                    next_x_t, new_state = layer(next_x_t, states[:, i])
+                    new_states.append(new_state)
+                
+                # Update states
+                states = torch.stack(new_states, dim=1)
+                outputs.append(next_x_t)
+        
         # === Reconstruct Sequence ===
-        x_out = torch.stack(outputs, dim=1)  # [B, L, D]
+        x_out = torch.stack(outputs, dim=1)  # [B, L+steps, D]
         
         return x_out, (mean_enc, std_enc)
-    
-    def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
+
+    def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None, steps=0):
         """
         Main forward method following TSL interface
         
@@ -121,6 +153,7 @@ class Model(nn.Module):
             x_dec: Decoder input [B, L, D] (unused in EST)
             x_mark_dec: Decoder temporal features [B, L, D] (unused in EST)
             mask: Mask for imputation tasks (unused in current implementation)
+            steps: Number of autoregressive steps for forecasting
             
         Returns:
             Model output based on task_name
@@ -128,22 +161,27 @@ class Model(nn.Module):
         
         # === Forecasting Tasks ===
         if self.task_name in ['long_term_forecast', 'short_term_forecast']:
+            # Use autoregressive steps for forecasting
+            forecast_steps = self.pred_len - self.seq_len
+            
             # Process with normalization for stable training
-            x_out, (mean_enc, std_enc) = self._est_forward_pass(x_enc, normalize=True)
+            # x_out, (mean_enc, std_enc) = self._est_forward_pass(x_enc, normalize=True, steps=forecast_steps)
+            x_out, _ = self._est_forward_pass(x_enc, normalize=False, steps=forecast_steps)
             
             # Project to output dimension
             x_out = self.projection(x_out)
             
             # Denormalize predictions
-            x_out = x_out * std_enc + mean_enc
+            # if mean_enc is not None and std_enc is not None:
+            #     x_out = x_out * std_enc + mean_enc
             
             # Return only prediction horizon
-            return x_out[:, -self.pred_len:, :]  # [B, pred_len, D]
+            return x_out  # [B, forecast_steps, D]
         
         # === Imputation & Anomaly Detection ===
         elif self.task_name in ['imputation', 'anomaly_detection']:
             # Process without normalization (preserve original scale)
-            x_out, _ = self._est_forward_pass(x_enc, normalize=False)
+            x_out, _ = self._est_forward_pass(x_enc, normalize=False, steps=0)
             
             # Project to output dimension
             x_out = self.projection(x_out)
@@ -153,7 +191,7 @@ class Model(nn.Module):
         # === Classification ===
         elif self.task_name == 'classification':
             # Process sequence
-            x_out, _ = self._est_forward_pass(x_enc, normalize=False)
+            x_out, _ = self._est_forward_pass(x_enc, normalize=False, steps=0)
             
             # Apply activation and dropout
             x_out = self.act(x_out)
