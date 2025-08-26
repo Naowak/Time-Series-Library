@@ -48,7 +48,7 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 32 \
   --des 'Exp' \
   --itr 1 \
@@ -75,7 +75,7 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 32 \
   --des 'Exp' \
   --itr 1 \
@@ -102,7 +102,7 @@ python -u run.py \
   --dec_in 7 \
   --c_out 7 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 32 \
   --des 'Exp' \
   --itr 1 \

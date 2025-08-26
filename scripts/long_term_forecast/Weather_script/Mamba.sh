@@ -22,7 +22,7 @@ python -u run.py \
   --d_ff 16 \
   --d_conv 4 \
   --c_out 21 \
-  --d_model 16 \
+  --d_model 64 \
   --des 'Exp' \
   --itr 1 \
 

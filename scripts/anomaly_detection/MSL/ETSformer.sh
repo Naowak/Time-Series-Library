@@ -10,7 +10,7 @@ python -u run.py \
   --features M \
   --seq_len 100 \
   --pred_len 100 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 128 \
   --e_layers 3 \
   --d_layers 3 \

@@ -12,7 +12,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \
@@ -31,7 +31,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \
@@ -50,7 +50,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \
@@ -69,7 +69,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \
@@ -88,7 +88,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \
@@ -107,7 +107,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \
@@ -126,7 +126,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \
@@ -145,7 +145,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \
@@ -164,7 +164,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \
@@ -183,7 +183,7 @@ python -u run.py \
   --e_layers 3 \
   --d_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --des 'Exp' \

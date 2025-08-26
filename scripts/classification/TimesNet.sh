@@ -9,7 +9,7 @@ python -u run.py \
   --data UEA \
   --e_layers 2 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 3 \
   --des 'Exp' \
@@ -27,7 +27,7 @@ python -u run.py \
   --data UEA \
   --e_layers 2 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 256 \
   --top_k 3 \
   --num_kernels 4 \
@@ -64,7 +64,7 @@ python -u run.py \
   --data UEA \
   --e_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 1 \
   --des 'Exp' \
@@ -82,7 +82,7 @@ python -u run.py \
   --data UEA \
   --e_layers 2 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 3 \
   --des 'Exp' \
@@ -100,7 +100,7 @@ python -u run.py \
   --data UEA \
   --e_layers 6 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 64 \
   --top_k 3 \
   --des 'Exp' \
@@ -118,7 +118,7 @@ python -u run.py \
   --data UEA \
   --e_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 3 \
   --des 'Exp' \
@@ -136,7 +136,7 @@ python -u run.py \
   --data UEA \
   --e_layers 3 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 3 \
   --des 'Exp' \
@@ -154,7 +154,7 @@ python -u run.py \
   --data UEA \
   --e_layers 2 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 2 \
   --des 'Exp' \
@@ -172,7 +172,7 @@ python -u run.py \
   --data UEA \
   --e_layers 2 \
   --batch_size 16 \
-  --d_model 16 \
+  --d_model 64 \
   --d_ff 64 \
   --top_k 3 \
   --des 'Exp' \
