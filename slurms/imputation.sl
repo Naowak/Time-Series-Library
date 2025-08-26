@@ -4,8 +4,8 @@
 #SBATCH --error=logs/imputation_%N_%j.err
 #SBATCH -C a100
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=3
-#SBATCH --gres=gpu:3
+#SBATCH --ntasks-per-node=4
+#SBATCH --gres=gpu:4
 #SBATCH --cpus-per-task=8
 #SBATCH --time=20:00:00
 #SBATCH --hint=nomultithread
@@ -25,11 +25,12 @@ set -x
 ARGS=(
     "scripts/imputation/ECL_script/EST.sh"
     "scripts/imputation/ETT_script/EST.sh"
-    "scripts/imputation/Weather_script/EST.sh"
+    "scripts/imputation/Weather_script/EST1.sh"
+    "scripts/imputation/Weather_script/EST2.sh"
 )
 
 # Boucle pour lancer chaque instance du script avec les arguments correspondants
-for ((i=0; i<3; i++)); do
+for ((i=0; i<4; i++)); do
     srun --exclusive --ntasks=1 --gpus=1 --export=ALL,CUDA_VISIBLE_DEVICES=$i bash ${ARGS[i]} &
 done
 
