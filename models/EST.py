@@ -160,7 +160,7 @@ class Model(nn.Module):
         """
         
         # === Forecasting Tasks ===
-        if self.task_name in ['long_term_forecast', 'short_term_forecast']:
+        if self.task_name in ['long_term_forecast']:
             # Use autoregressive steps for forecasting
             forecast_steps = self.pred_len - self.seq_len
             
@@ -176,10 +176,10 @@ class Model(nn.Module):
             #     x_out = x_out * std_enc + mean_enc
             
             # Return only prediction horizon
-            return x_out  # [B, forecast_steps, D]
+            return x_out  # [B, pred_len, D]
         
         # === Imputation & Anomaly Detection ===
-        elif self.task_name in ['imputation', 'anomaly_detection']:
+        elif self.task_name in ['imputation', 'anomaly_detection', 'short_term_forecast']:
             # Process without normalization (preserve original scale)
             x_out, _ = self._est_forward_pass(x_enc, normalize=False, steps=0)
             
