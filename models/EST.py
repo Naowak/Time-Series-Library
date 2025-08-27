@@ -178,8 +178,17 @@ class Model(nn.Module):
             # Return only prediction horizon
             return x_out  # [B, pred_len, D]
         
+        elif self.task_name in ['short_term_forecast']:
+            # Process without normalization (preserve original scale)
+            x_out, _ = self._est_forward_pass(x_enc, normalize=False, steps=0)
+            
+            # Project to output dimension
+            x_out = self.projection(x_out)
+            
+            return x_out[:, -self.pred_len:, :]  # [B, pred_len, D]
+        
         # === Imputation & Anomaly Detection ===
-        elif self.task_name in ['imputation', 'anomaly_detection', 'short_term_forecast']:
+        elif self.task_name in ['imputation', 'anomaly_detection']:
             # Process without normalization (preserve original scale)
             x_out, _ = self._est_forward_pass(x_enc, normalize=False, steps=0)
             
