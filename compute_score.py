@@ -23,7 +23,7 @@ def calculate_anomaly_detection(base_dir: Path, expected_count: int) -> float:
         text = f.read()
     f_scores = re.findall(r'F-score : ([\d.]+)', text)
     if expected_count is not None and len(f_scores) != expected_count:
-        raise ValueError(f"Nombre de F-scores trouvé ({len(f_scores)}) incorrect. Attendu : {expected_count}.")
+        raise ValueError(f"Nombre de F-scores trouvé ({len(f_scores)}) incorrect. Attendu : {expected_count}. Current F-score: {np.mean(np.array(f_scores, dtype=float) if f_scores else 'nan')}")
     if not f_scores:
         raise ValueError("Aucun F-score trouvé dans le fichier de détection d'anomalies.")
     return np.mean(np.array(f_scores, dtype=float))
@@ -35,7 +35,7 @@ def calculate_imputation(base_dir: Path, expected_count: int) -> float:
         text = f.read()
     mses = re.findall(r'mse:([\d.]+)', text)
     if expected_count is not None and len(mses) != expected_count:
-        raise ValueError(f"Nombre de MSE trouvé ({len(mses)}) incorrect. Attendu : {expected_count}.")
+        raise ValueError(f"Nombre de MSE trouvé ({len(mses)}) incorrect. Attendu : {expected_count}. Current mse: {np.mean(np.array(mses, dtype=float) if mses else 'nan')}")
     if not mses:
         raise ValueError("Aucune valeur MSE trouvée dans le fichier d'imputation.")
     return np.mean(np.array(mses, dtype=float))
@@ -47,7 +47,7 @@ def calculate_long_term_forecast(base_dir: Path, expected_count: int) -> float:
         text = f.read()
     mses = re.findall(r'mse:([\d.]+)', text)
     if expected_count is not None and len(mses) != expected_count:
-        raise ValueError(f"Nombre de MSE trouvé ({len(mses)}) incorrect. Attendu : {expected_count}.")
+        raise ValueError(f"Nombre de MSE trouvé ({len(mses)}) incorrect. Attendu : {expected_count}. Current mse: {np.mean(np.array(mses, dtype=float) if mses else 'nan')}")
     if not mses:
         raise ValueError("Aucune valeur MSE trouvée dans le fichier de prévision à long terme.")
     return np.mean(np.array(mses, dtype=float))
@@ -59,33 +59,33 @@ def calculate_classification(log_dir: Path, expected_count: int) -> float:
         text = f.read()
     accuracies = re.findall(r'accuracy:([\d.]+)', text)
     if expected_count is not None and len(accuracies) != expected_count:
-        raise ValueError(f"Nombre de 'accuracy' trouvé ({len(accuracies)}) incorrect. Attendu : {expected_count}.")
+        raise ValueError(f"Nombre de 'accuracy' trouvé ({len(accuracies)}) incorrect. Attendu : {expected_count}., Current accuracy: {np.mean(np.array(accuracies, dtype=float) if accuracies else 'nan')}")
     if not accuracies:
         raise ValueError("Aucune valeur 'accuracy' trouvée dans le log de classification.")
     return np.mean(np.array(accuracies, dtype=float))
 
-def calculate_short_term_forecast(log_dir: Path) -> float:
-    """Trouve le score OWA 'Average' dans le log de prévision à court terme."""
-    try:
-        log_file = find_log_file(log_dir, 'short_term_forecast_')
-    except FileNotFoundError:
-        log_file = find_log_file(log_dir, 'ETT_forecast_')
-    last_owa_line = ""
+def calculate_short_term_forecast(log_dir: Path, expected_count: int) -> float:
+    """Calcule la moyenne de tous les scores OWA 'Average' dans le log de prévision à court terme."""
+    
+    log_file = find_log_file(log_dir, 'short_term_forecast_')
+    owa_averages = []
+    
     with open(log_file, 'r') as f:
         for line in f:
             if 'owa:' in line:
-                last_owa_line = line
+                dict_str_match = re.search(r"(\{.*\})", line)
+                if dict_str_match:
+                    owa_dict = ast.literal_eval(dict_str_match.group(1).replace("'", '"'))
+                    if 'Average' in owa_dict:
+                        owa_averages.append(owa_dict['Average'])
 
-    if not last_owa_line:
-        raise ValueError("Aucune ligne 'owa:' trouvée dans le log de prévision.")
-
-    dict_str_match = re.search(r"(\{.*\})", last_owa_line)
-    if not dict_str_match:
-        raise ValueError("Impossible de parser le dictionnaire 'owa' depuis la ligne de log.")
-    owa_dict = ast.literal_eval(dict_str_match.group(1).replace("'", '"'))
-    if 'Average' not in owa_dict:
-        raise KeyError("La clé 'Average' est absente du dictionnaire 'owa'.")
-    return owa_dict['Average']
+    if not owa_averages:
+        raise ValueError("Aucune valeur 'Average' trouvée dans les dictionnaires 'owa' du log.")
+    
+    if expected_count is not None and len(owa_averages) != expected_count:
+        raise ValueError(f"Nombre de valeurs OWA 'Average' trouvé ({len(owa_averages)}) incorrect. Attendu : {expected_count}. Current OWA Average: {np.mean(np.array(owa_averages, dtype=float) if owa_averages else 'nan')}")
+    
+    return np.mean(np.array(owa_averages, dtype=float))
 
 def main():
     """
@@ -116,9 +116,9 @@ def main():
     tasks = {
         "Anomaly Detection (Mean F-score)": (calculate_anomaly_detection, results_dir, 5),
         "Imputation (Mean MSE)": (calculate_imputation, results_dir, 12),
-        "Long-Term Forecast (Mean MSE)": (calculate_long_term_forecast, results_dir, 10),
+        "Long-Term Forecast (Mean MSE)": (calculate_long_term_forecast, results_dir, 36),
         "Classification (Mean Accuracy)": (calculate_classification, log_dir, 10),
-        "Short-Term Forecast (OWA Average)": (calculate_short_term_forecast, log_dir, None) # Pas de compte attendu
+        "Short-Term Forecast (OWA Average)": (calculate_short_term_forecast, log_dir, 6) # Pas de compte attendu
     }
 
     for name, (func, data_dir, expected_count) in tasks.items():
