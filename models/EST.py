@@ -165,25 +165,29 @@ class Model(nn.Module):
             forecast_steps = self.pred_len - self.seq_len
             
             # Process with normalization for stable training
-            # x_out, (mean_enc, std_enc) = self._est_forward_pass(x_enc, normalize=True, steps=forecast_steps)
-            x_out, _ = self._est_forward_pass(x_enc, normalize=False, steps=forecast_steps)
+            x_out, (mean_enc, std_enc) = self._est_forward_pass(x_enc, normalize=True, steps=forecast_steps)
+            # x_out, _ = self._est_forward_pass(x_enc, normalize=False, steps=forecast_steps)
             
             # Project to output dimension
             x_out = self.projection(x_out)
             
             # Denormalize predictions
-            # if mean_enc is not None and std_enc is not None:
-            #     x_out = x_out * std_enc + mean_enc
+            if mean_enc is not None and std_enc is not None:
+                x_out = x_out * std_enc + mean_enc
             
             # Return only prediction horizon
             return x_out  # [B, pred_len, D]
         
         elif self.task_name in ['short_term_forecast']:
             # Process without normalization (preserve original scale)
-            x_out, _ = self._est_forward_pass(x_enc, normalize=False, steps=0)
+            x_out, (mean_enc, std_enc) = self._est_forward_pass(x_enc, normalize=False, steps=0)
             
             # Project to output dimension
             x_out = self.projection(x_out)
+
+            # Denormalize predictions
+            if mean_enc is not None and std_enc is not None:
+                x_out = x_out * std_enc + mean_enc
             
             return x_out[:, -self.pred_len:, :]  # [B, pred_len, D]
         
