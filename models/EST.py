@@ -180,7 +180,7 @@ class Model(nn.Module):
         
         elif self.task_name in ['short_term_forecast']:
             # Process without normalization (preserve original scale)
-            x_out, (mean_enc, std_enc) = self._est_forward_pass(x_enc, normalize=False, steps=0)
+            x_out, (mean_enc, std_enc) = self._est_forward_pass(x_enc, normalize=True, steps=0)
             
             # Project to output dimension
             x_out = self.projection(x_out)
