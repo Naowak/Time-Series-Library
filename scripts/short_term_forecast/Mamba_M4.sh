@@ -18,7 +18,7 @@ python -u run.py \
   --d_conv 4 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 64 \
+  --d_model 128 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -40,7 +40,7 @@ python -u run.py \
   --d_conv 4 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 64 \
+  --d_model 128 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -62,7 +62,7 @@ python -u run.py \
   --d_conv 4 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 64 \
+  --d_model 128 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -84,7 +84,7 @@ python -u run.py \
   --d_conv 4 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 64 \
+  --d_model 128 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -106,7 +106,7 @@ python -u run.py \
   --d_conv 4 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 64 \
+  --d_model 128 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -128,7 +128,7 @@ python -u run.py \
   --d_conv 4 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 64 \
+  --d_model 128 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
