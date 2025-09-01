@@ -32,7 +32,7 @@ memory_units = 4
 memory_dim = 128
 model_dim = 64
 memory_connectivity = 0.05
-NORMALISATION = False
+/!\ NORMALISATION FORECAST = False
 
 ---- run_6 ----
 layer = 2
@@ -40,6 +40,7 @@ memory_units = 8
 memory_dim = 64
 model_dim = 64
 memory_connectivity = 0.1
+/!\ BUG NORMALISATION SHORT TERM FORECAST
 
 ---- run_7 ----
 layer = 3
@@ -47,6 +48,7 @@ memory_units = 4
 memory_dim = 32
 model_dim = 64
 memory_connectivity = 0.25
+/!\ BUG NORMALISATION SHORT TERM FORECAST
 
 ---- run_8 ----
 layer = 4
