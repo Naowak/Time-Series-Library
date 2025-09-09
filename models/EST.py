@@ -16,6 +16,9 @@ class Model(nn.Module):
         self.task_name = configs.task_name
         self.pred_len = configs.pred_len
         self.seq_len = configs.seq_len
+        self.enc_in = configs.enc_in
+        self.c_out = configs.c_out
+        self.num_class = getattr(configs, 'num_class', 1)  # For classification tasks
         
         # EST specific parameters (with defaults if not in configs)
         self.num_layers = getattr(configs, 'num_layers', 1)
