@@ -10,12 +10,12 @@ python -u run.py \
   --features M \
   --seq_len 100 \
   --pred_len 0 \
-  --num_layers 2 \
+  --num_layers 1 \
   --memory_units 16 \
-  --memory_dim 32 \
-  --d_model 32 \
+  --memory_dim 64 \
+  --d_model 64 \
   --dropout 0 \
-  --memory_connectivity 0.25 \
+  --memory_connectivity 0.125 \
   --enc_in 51 \
   --c_out 51 \
   --anomaly_ratio 1 \

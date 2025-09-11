@@ -22,7 +22,7 @@ python -u run.py \
   --dec_in 21 \
   --c_out 21 \
   --des $des \
-  --d_model 32 \
+  --d_model 64 \
   --itr 1
 
 python -u run.py \
@@ -43,7 +43,7 @@ python -u run.py \
   --dec_in 21 \
   --c_out 21 \
   --des $des \
-  --d_model 32 \
+  --d_model 64 \
   --itr 1
 
 python -u run.py \
@@ -64,7 +64,7 @@ python -u run.py \
   --dec_in 21 \
   --c_out 21 \
   --des $des \
-  --d_model 32 \
+  --d_model 64 \
   --itr 1
 
 python -u run.py \
@@ -85,5 +85,5 @@ python -u run.py \
   --dec_in 21 \
   --c_out 21 \
   --des $des \
-  --d_model 32 \
+  --d_model 64 \
   --itr 1

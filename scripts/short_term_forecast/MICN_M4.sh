@@ -18,7 +18,7 @@ python -u run.py \
   --dec_in 1 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 5 \
   --des 'Exp' \
@@ -42,7 +42,7 @@ python -u run.py \
   --dec_in 1 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 5 \
   --des 'Exp' \
@@ -66,7 +66,7 @@ python -u run.py \
   --dec_in 1 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 64 \
   --d_ff 64 \
   --top_k 5 \
   --des 'Exp' \
@@ -90,7 +90,7 @@ python -u run.py \
   --dec_in 1 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 64 \
   --d_ff 16 \
   --top_k 5 \
   --des 'Exp' \
@@ -114,7 +114,7 @@ python -u run.py \
   --dec_in 1 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 5 \
   --des 'Exp' \
@@ -138,7 +138,7 @@ python -u run.py \
   --dec_in 1 \
   --c_out 1 \
   --batch_size 16 \
-  --d_model 32 \
+  --d_model 64 \
   --d_ff 32 \
   --top_k 5 \
   --des 'Exp' \
