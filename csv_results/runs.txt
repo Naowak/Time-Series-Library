@@ -63,6 +63,7 @@ memory_units = 16
 memory_dim = 32
 model_dim = 32
 memory_connectivity = 0.25
+/!\ NO LONG TERM FORECAST
 
 ---- run_10 ----
 layer = 1
@@ -70,3 +71,4 @@ memory_units = 16
 memory_dim = 64
 model_dim = 64
 memory_connectivity = 0.125
+/!\ NO LONG TERM FORECAST
