@@ -10,10 +10,10 @@ python -u run.py \
   --features M \
   --seq_len 100 \
   --pred_len 0 \
-  --num_layers 1 \
-  --memory_units 16 \
+  --num_layers 4 \
+  --memory_units 2 \
   --memory_dim 64 \
-  --d_model 64 \
+  --d_model 128 \
   --dropout 0 \
   --memory_connectivity 0.125 \
   --enc_in 25 \

@@ -11,11 +11,11 @@ python -u run.py \
   --data UEA \
   --batch_size 16 \
   --num_layers 1 \
-  --memory_units 16 \
-  --memory_dim 64 \
+  --memory_units 4 \
+  --memory_dim 128 \
   --d_model 64 \
   --dropout 0 \
-  --memory_connectivity 0.125 \
+  --memory_connectivity 0.05 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -30,12 +30,12 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 1 \
+  --num_layers 2 \
   --memory_units 16 \
-  --memory_dim 64 \
-  --d_model 64 \
+  --memory_dim 32 \
+  --d_model 32 \
   --dropout 0 \
-  --memory_connectivity 0.125 \
+  --memory_connectivity 0.25 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -70,12 +70,12 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 1 \
-  --memory_units 16 \
-  --memory_dim 64 \
+  --num_layers 3 \
+  --memory_units 4 \
+  --memory_dim 32 \
   --d_model 64 \
   --dropout 0 \
-  --memory_connectivity 0.125 \
+  --memory_connectivity 0.25 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -110,12 +110,12 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 1 \
-  --memory_units 16 \
+  --num_layers 4 \
+  --memory_units 8 \
   --memory_dim 64 \
-  --d_model 64 \
+  --d_model 32 \
   --dropout 0 \
-  --memory_connectivity 0.125 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -131,11 +131,11 @@ python -u run.py \
   --data UEA \
   --batch_size 16 \
   --num_layers 1 \
-  --memory_units 16 \
-  --memory_dim 64 \
-  --d_model 64 \
+  --memory_units 2 \
+  --memory_dim 512 \
+  --d_model 128 \
   --dropout 0 \
-  --memory_connectivity 0.125 \
+  --memory_connectivity 0.025 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -150,12 +150,12 @@ python -u run.py \
   --model $model_name \
   --data UEA \
   --batch_size 16 \
-  --num_layers 1 \
-  --memory_units 16 \
+  --num_layers 2 \
+  --memory_units 8 \
   --memory_dim 64 \
   --d_model 64 \
   --dropout 0 \
-  --memory_connectivity 0.125 \
+  --memory_connectivity 0.1 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -171,11 +171,11 @@ python -u run.py \
   --data UEA \
   --batch_size 16 \
   --num_layers 1 \
-  --memory_units 16 \
-  --memory_dim 64 \
+  --memory_units 4 \
+  --memory_dim 128 \
   --d_model 64 \
   --dropout 0 \
-  --memory_connectivity 0.125 \
+  --memory_connectivity 0.05 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \

@@ -16,11 +16,11 @@ python -u run.py \
   --label_len 0 \
   --pred_len 0 \
   --num_layers 1 \
-  --memory_units 16 \
-  --memory_dim 64 \
+  --memory_units 4 \
+  --memory_dim 100 \
   --d_model 64 \
   --dropout 0 \
-  --memory_connectivity 0.125 \
+  --memory_connectivity 0.05 \
   --enc_in 21 \
   --c_out 21 \
   --batch_size 16 \
@@ -46,11 +46,11 @@ python -u run.py \
   --label_len 0 \
   --pred_len 0 \
   --num_layers 1 \
-  --memory_units 16 \
-  --memory_dim 64 \
+  --memory_units 4 \
+  --memory_dim 100 \
   --d_model 64 \
   --dropout 0 \
-  --memory_connectivity 0.125 \
+  --memory_connectivity 0.05 \
   --enc_in 21 \
   --c_out 21 \
   --batch_size 16 \
