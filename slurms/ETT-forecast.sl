@@ -23,10 +23,10 @@ set -x
 
 # Define an array of arguments for the different runs
 ARGS=(
-    "scripts/long_term_forecast/ETT_script/ESTh1.sh"
-    "scripts/long_term_forecast/ETT_script/ESTh2.sh"
-    "scripts/long_term_forecast/ETT_script/ESTm1.sh"
-    "scripts/long_term_forecast/ETT_script/ESTm2.sh"
+    "scripts/long_term_forecast/ETT_script/DTh1.sh"
+    "scripts/long_term_forecast/ETT_script/DTh2.sh"
+    "scripts/long_term_forecast/ETT_script/DTm1.sh"
+    "scripts/long_term_forecast/ETT_script/DTm2.sh"
 )
 
 # Boucle pour lancer chaque instance du script avec les arguments correspondants

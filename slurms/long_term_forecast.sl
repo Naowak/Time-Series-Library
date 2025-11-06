@@ -23,11 +23,11 @@ set -x
 
 # Define an array of arguments for the different runs
 ARGS=(
-    "scripts/long_term_forecast/ECL_script/EST.sh"
-    "scripts/long_term_forecast/Exchange_script/EST.sh"
-    "scripts/long_term_forecast/ILI_script/EST.sh"
-    "scripts/long_term_forecast/Traffic_script/EST.sh"
-    "scripts/long_term_forecast/Weather_script/EST.sh"
+    "scripts/long_term_forecast/ECL_script/DT.sh"
+    "scripts/long_term_forecast/Exchange_script/DT.sh"
+    "scripts/long_term_forecast/ILI_script/DT.sh"
+    "scripts/long_term_forecast/Traffic_script/DT.sh"
+    "scripts/long_term_forecast/Weather_script/DT.sh"
 )
 
 # Boucle pour lancer chaque instance du script avec les arguments correspondants

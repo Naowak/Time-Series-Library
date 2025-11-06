@@ -21,6 +21,6 @@ conda deactivate
 source tsl_venv/bin/activate
 set -x
 
-srun --exclusive --ntasks=1 bash scripts/short_term_forecast/EST.sh
+srun --exclusive --ntasks=1 bash scripts/short_term_forecast/DT.sh
 
 wait

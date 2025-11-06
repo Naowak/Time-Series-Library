@@ -23,10 +23,10 @@ set -x
 
 # Define an array of arguments for the different runs
 ARGS=(
-    "scripts/imputation/ECL_script/EST.sh"
-    "scripts/imputation/ETT_script/EST.sh"
-    "scripts/imputation/Weather_script/EST1.sh"
-    "scripts/imputation/Weather_script/EST2.sh"
+    "scripts/imputation/ECL_script/DT.sh"
+    "scripts/imputation/ETT_script/DT.sh"
+    "scripts/imputation/Weather_script/DT1.sh"
+    "scripts/imputation/Weather_script/DT2.sh"
 )
 
 # Boucle pour lancer chaque instance du script avec les arguments correspondants

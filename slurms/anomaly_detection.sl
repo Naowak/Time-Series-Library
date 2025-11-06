@@ -23,11 +23,11 @@ set -x
 
 # Define an array of arguments for the different runs
 ARGS=(
-    "scripts/anomaly_detection/MSL/EST.sh"
-    "scripts/anomaly_detection/PSM/EST.sh"
-    "scripts/anomaly_detection/SMAP/EST.sh"
-    "scripts/anomaly_detection/SMD/EST.sh"
-    "scripts/anomaly_detection/SWAT/EST.sh"
+    "scripts/anomaly_detection/MSL/DT.sh"
+    "scripts/anomaly_detection/PSM/DT.sh"
+    "scripts/anomaly_detection/SMAP/DT.sh"
+    "scripts/anomaly_detection/SMD/DT.sh"
+    "scripts/anomaly_detection/SWAT/DT.sh"
 )
 
 # Boucle pour lancer chaque instance du script avec les arguments correspondants
