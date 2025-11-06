@@ -581,7 +581,7 @@ def _sparse_mm_subhead(x, W, x_pos, w_pos, w_heads):
     # subW = subW[w_heads] # [B, subH, connectivity, O]
 
     # Extract subX (corresponding values of x) & select heads per batch
-    subX = x[:, *x_pos].reshape(x.shape[0], x.shape[1], W.shape[-1], -1).transpose(-2, -1) # [B, H, connectivity, O]
+    subX = x[:, x_pos].reshape(x.shape[0], x.shape[1], W.shape[-1], -1).transpose(-2, -1) # [B, H, connectivity, O]
     # batchs = torch.arange(x.shape[0]).view(-1, 1).expand_as(w_heads) # [B, subH]
     # subX = subX[batchs, w_heads] # [B, subH, connectivity, O]
 
