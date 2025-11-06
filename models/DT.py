@@ -24,7 +24,7 @@ class Model(nn.Module):
         self.num_class = getattr(configs, 'num_class', 1)  # For classification tasks
         
         # DT specific parameters (with defaults if not in configs)
-        self.num_layers = getattr(configs, 'e_layers', 1)  # Use e_layers from TSL convention
+        self.num_layers = getattr(configs, 'num_layers', 1)  # Use e_layers from TSL convention
         self.memory_units = getattr(configs, 'memory_units', 4)
         self.memory_dim = getattr(configs, 'memory_dim', 64)
         self.attention_dim = getattr(configs, 'd_model', 64)  # Use d_model from TSL convention
