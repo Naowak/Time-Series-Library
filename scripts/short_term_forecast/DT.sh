@@ -13,11 +13,11 @@ python -u run.py \
   --features M \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --c_out 1 \
   --batch_size 16 \
@@ -37,11 +37,11 @@ python -u run.py \
   --features M \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --c_out 1 \
   --batch_size 16 \
@@ -61,11 +61,11 @@ python -u run.py \
   --features M \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --c_out 1 \
   --batch_size 16 \
@@ -85,11 +85,11 @@ python -u run.py \
   --features M \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --c_out 1 \
   --batch_size 16 \
@@ -109,11 +109,11 @@ python -u run.py \
   --features M \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --c_out 1 \
   --batch_size 16 \
@@ -133,11 +133,11 @@ python -u run.py \
   --features M \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --c_out 1 \
   --batch_size 16 \

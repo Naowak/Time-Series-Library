@@ -12,11 +12,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -33,11 +33,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -54,11 +54,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -75,11 +75,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -96,11 +96,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -117,11 +117,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -138,11 +138,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -159,11 +159,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -180,11 +180,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \
@@ -201,11 +201,11 @@ python -u run.py \
   --batch_size 16 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate 0.001 \

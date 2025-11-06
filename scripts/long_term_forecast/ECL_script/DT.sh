@@ -16,11 +16,11 @@ python -u run.py \
   --pred_len 96 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --dec_in 1 \
   --c_out 1 \
@@ -41,11 +41,11 @@ python -u run.py \
   --pred_len 192 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --dec_in 1 \
   --c_out 1 \
@@ -66,11 +66,11 @@ python -u run.py \
   --pred_len 336 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --dec_in 1 \
   --c_out 1 \
@@ -91,11 +91,11 @@ python -u run.py \
   --pred_len 720 \
   --num_layers 2 \
   --memory_units 4 \
-  --memory_dim 64 \
+  --memory_dim 32 \
   --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
-  --memory_connectivity 0.1 \
+  --memory_connectivity 0.2 \
   --enc_in 1 \
   --dec_in 1 \
   --c_out 1 \
