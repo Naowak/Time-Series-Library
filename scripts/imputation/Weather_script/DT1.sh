@@ -15,10 +15,10 @@ python -u run.py \
   --seq_len 96 \
   --label_len 0 \
   --pred_len 0 \
-  --num_layers 4 \
+  --num_layers 2 \
   --memory_units 4 \
   --memory_dim 64 \
-  --d_model 64 \
+  --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
   --memory_connectivity 0.1 \
@@ -46,10 +46,10 @@ python -u run.py \
   --seq_len 96 \
   --label_len 0 \
   --pred_len 0 \
-  --num_layers 4 \
+  --num_layers 2 \
   --memory_units 4 \
   --memory_dim 64 \
-  --d_model 64 \
+  --d_model 32 \
   --n_heads 4 \
   --dropout 0.1 \
   --memory_connectivity 0.1 \
