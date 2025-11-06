@@ -14,6 +14,7 @@ python -u run.py \
   --memory_units 4 \
   --memory_dim 64 \
   --d_model 64 \
+  --n_heads 4 \
   --dropout 0.1 \
   --memory_connectivity 0.1 \
   --enc_in 55 \
