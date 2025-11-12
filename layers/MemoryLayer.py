@@ -6,7 +6,7 @@ class MemoryLayer(torch.nn.Module):
     """Implements a reservoir network."""
 
     def __init__(self, units=None, neurons=None, input_dim=None, output_dim=None, res_connectivity=0.2, 
-                 input_connectivity=0.2, device='cpu', dtype=torch.float32, complex_dtype=torch.complex128):
+                 input_connectivity=0.2, device='cpu', dtype=torch.float32, complex_dtype=torch.complex64):
         """
         Create a reservoir with the given parameters.
 
@@ -52,6 +52,7 @@ class MemoryLayer(torch.nn.Module):
         W = W / initial_sr * sr # Init SR
 
         # Compute Lambda, P, P_inv for the spectral decomposition of W
+        W = W.to(torch.float64)  # High precision for stability
         Lambda, P, P_inv = list(zip(*[_decompose_matrix(w) for w in W]))
         Lambda = torch.stack([torch.diagonal(lam) for lam in Lambda]).to(complex_dtype) # [M, R]
         P = torch.stack(P).to(complex_dtype) # [M, R, R]
@@ -98,7 +99,7 @@ class MemoryLayer(torch.nn.Module):
         Lambda = lr * Lambda + (1 - lr) # [B, T, M, 1, 1] * [1, 1, M, 1, R] = [B, T, M, 1, R]
         
         # Compute Lambda window
-        Lambda_window = _compute_Lambda_window(Lambda.squeeze(3)) # [B, T, T+1, M, R]
+        # Lambda_window = _compute_Lambda_window(Lambda.squeeze(3)) # [B, T, T+1, M, R]
 
         # Compute feed and concat the initial state
         feed = X_proj.to(self.complex_dtype) @ Win_ # [B, T, M, 1, R]
@@ -106,8 +107,12 @@ class MemoryLayer(torch.nn.Module):
         feed = feed.view(batch_size, 1, seq_len+1, self.units, self.neurons) # [B, 1, T+1, M, R]
 
         # Compute echos, states and apply RMSNorm
-        echos = (feed * Lambda_window) # [B, T, T+1, M, R]
-        new_state = torch.sum(echos, dim=2) # [B, T, M, R] -> Sum over the echo dimension
+        # echos = (feed * Lambda_window) # [B, T, T+1, M, R]
+        # new_state = torch.sum(echos, dim=2) # [B, T, M, R] -> Sum over the echo dimension
+        Lambda_compact = _compute_Lambda_compact(Lambda.squeeze(3)) # [B, (T^2+T)/2, M, R]
+        feed = _compute_feed_compact(feed.squeeze(1)) # [B, (T^2+T)/2, M, R]
+        echos = (feed * Lambda_compact) # [B, (T^2+T)/2, M, R]
+        new_state = _compute_new_state(echos, seq_len) # [B, T, M, R]
 
         # Compute the output
         output = (new_state.unsqueeze(3) @ self.Wout_).real.to(self.dtype).squeeze(3) # [B, T, M, D]
@@ -143,12 +148,12 @@ def _initialize_matrix(shape, connectivity, distribution='normal', dtype=torch.f
     """
     if distribution == 'normal':
         matrix = torch.tensor(np.random.normal(size=shape, loc=0, scale=1), device=device, dtype=dtype)
-        mask = _fixed_bernoulli(shape, connectivity, device=device)
+        mask = _fixed_bernoulli(shape, connectivity, device=device, dtype=dtype)
         return matrix * mask
     
     elif distribution == 'uniform':
         matrix = torch.rand(size=shape, device=device, dtype=dtype)
-        mask = _fixed_bernoulli(shape, connectivity, device=device)
+        mask = _fixed_bernoulli(shape, connectivity, device=device, dtype=dtype)
         return matrix * mask
 
     elif distribution == 'bernoulli':
@@ -211,7 +216,7 @@ def _fixed_bernoulli(shape, connectivity, device='cpu', dtype=torch.float32):
     
     # Init matrix & nb connections
     nb_connections = max(1, int(connectivity * shape[-2])) # At least one connection
-    matrix = torch.zeros(shape, device=device, dtype=dtype)
+    matrix = torch.zeros(shape, device=device)
     
     # For each column, set the connections
     for head in range(shape[-3]):
@@ -219,7 +224,7 @@ def _fixed_bernoulli(shape, connectivity, device='cpu', dtype=torch.float32):
             indices = torch.randperm(shape[-2])[:nb_connections]
             matrix[head, indices, col] = 1
     
-    return matrix
+    return matrix.to(dtype)
 
 def _decompose_matrix(W):
     """
@@ -261,3 +266,65 @@ def _compute_Lambda_window(Lambda):
         Lambda_window[:, t, t+1] = 1  # Identity for the product when k=t
 
     return Lambda_window
+
+
+def _compute_Lambda_compact(Lambda):
+    """
+    Compute the compact representation of Lambda for efficient computation.
+
+    Args:
+        Lambda: Tensor of shape (B, T, M, R) representing eigenvalues (R) combined with adaptive leak rates for each time step.
+
+    Returns:
+        Lambda_compact: Tensor of shape (B, (T^2+T)/2, M, R) representing the compacted version of Lambda.
+    """
+    B, T, M, R = Lambda.shape
+    Lambda_compact = torch.zeros((B, (T**2 + T) // 2 + T, M, R), dtype=Lambda.dtype, device=Lambda.device)
+
+    # Fill the compact representation
+    idx = 0
+    for t in range(1, T+1):
+        Lambda_compact[:, idx:idx + t] = torch.cumprod(Lambda[:, :t].flip(1), dim=1).flip(1)
+        Lambda_compact[:, idx + t] = 1  # Identity for the product when k=t
+        idx += t + 1
+
+    return Lambda_compact
+
+def _compute_feed_compact(feed):
+    """
+    Apply the compacted Lambda to the feed tensor.
+
+    Args:
+        feed: Tensor of shape (B, T+1, M, R) representing the feed inputs.
+
+    Returns:
+        new_state: Tensor of shape (B, T, M, R) representing the new states after applying Lambda.
+    """
+    B, T_plus_1, M, R = feed.shape
+    T = T_plus_1 - 1
+    feed_compact = torch.zeros((B, (T**2 + T) // 2 + T, M, R), dtype=feed.dtype, device=feed.device)
+
+    idx = 0
+    for t in range(1, T+1):
+        feed_compact[:, idx:idx + t+1] = feed[:, :t+1]
+        idx += t + 1
+
+    return feed_compact
+
+def _compute_new_state(echos, T):
+    """
+    Compute the new state from the echos tensor.
+    Args:
+        echos: Tensor of shape (B, (T^2+T)/2, M, R) representing the echos.
+    Returns:
+        new_state: Tensor of shape (B, T, M, R) representing the new states.
+    """
+    B, _, M, R = echos.shape
+    new_state = torch.zeros((B, T, M, R), dtype=echos.dtype, device=echos.device)
+
+    idx = 0
+    for t in range(T):
+        new_state[:, t] = torch.sum(echos[:, idx:idx + t + 2], dim=1)
+        idx += t + 2
+
+    return new_state
