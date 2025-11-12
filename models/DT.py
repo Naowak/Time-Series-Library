@@ -146,9 +146,11 @@ class Model(nn.Module):
             
             # Zero-out padding embeddings if available
             if x_mark_enc is not None:
-                output = output.reshape(output.shape[0], output.shape[1], self.memory_units, -1) # [B, L, M, D]
-                output = output * x_mark_enc.unsqueeze(-1) # [B, L, M, D]
-                output = output.reshape(output.shape[0], output.shape[1], -1) # [B, L, M*D]
+                # x_mark_enc is padding_mask with shape [B, L]
+                # We need to expand it to match [B, L, M*D]
+                padding_mask = x_mark_enc.unsqueeze(-1)  # [B, L, 1]
+                padding_mask = padding_mask.expand(-1, -1, output.shape[-1])  # [B, L, M*D]
+                output = output * padding_mask  # [B, L, M*D]
             
             # Flatten and classify
             output = output.reshape(output.shape[0], -1)  # [B, L*M*D]
