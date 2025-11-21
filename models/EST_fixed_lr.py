@@ -397,7 +397,7 @@ class Memory(torch.nn.Module):
         Win = _initialize_matrix((units, input_dim, neurons), input_connectivity, distribution='fixed_bernoulli', dtype=dtype, device=device)
         bias = _initialize_matrix((units, 1, neurons), bias_prob, distribution='bernoulli', dtype=dtype, device=device)
         Wout = _initialize_matrix((units, neurons, output_dim), 1.0, distribution='normal', dtype=dtype, device=device)
-        adaptive_lr = torch.nn.init.uniform_(torch.empty((units, input_dim, 1), device=device, dtype=dtype))
+        # adaptive_lr = torch.nn.init.uniform_(torch.empty((units, input_dim, 1), device=device, dtype=dtype))
         initial_sr = _get_spectral_radius(W).view(units, 1, 1)
         sr = torch.rand(units, 1, 1, dtype=dtype, device=device)
         temperature = torch.ones(1, dtype=dtype, device=device)
@@ -413,14 +413,15 @@ class Memory(torch.nn.Module):
         # Register parameters 
         self.Wout = torch.nn.Parameter(Wout) # [M, R, D]
         self.sr = torch.nn.Parameter(sr) # [M, 1, 1]
-        self.adaptive_lr = torch.nn.Parameter(adaptive_lr) # [M, D, 1] 
+        # self.adaptive_lr = torch.nn.Parameter(adaptive_lr) # [M, D, 1] 
+        self.lr = torch.nn.Parameter(torch.rand(units, 1, 1, dtype=dtype, device=device)) # [M, 1, 1]
         self.temperature = torch.nn.Parameter(temperature) # [1]
 
         # Register the non-zero positions of W and Win, and the corresponding positions in x
         self.w_pos = W.transpose(-2, -1).nonzero(as_tuple=True) 
         self.win_pos = Win.transpose(-2, -1).nonzero(as_tuple=True)
-        self.xw_pos = (self.w_pos[0], torch.zeros(self.w_pos[1].shape, dtype=int, device=device), self.w_pos[2])
-        self.xwin_pos = (self.win_pos[0], torch.zeros(self.win_pos[1].shape, dtype=int, device=device), self.win_pos[2])
+        self.xw_pos = (self.w_pos[0], torch.zeros(self.w_pos[1].shape, dtype=torch.int32, device=device), self.w_pos[2])
+        self.xwin_pos = (self.win_pos[0], torch.zeros(self.win_pos[1].shape, dtype=torch.int32, device=device), self.win_pos[2])
         
 
     def forward(self, X, state):
@@ -440,7 +441,7 @@ class Memory(torch.nn.Module):
         state = state.view(batch_size, self.units, 1, self.neurons) # [B, M, 1, R]
 
         # Adaptive Leak Rate
-        lr = torch.softmax((X @ self.adaptive_lr) / self.temperature, dim=1) # [batch, units, 1, 1]
+        # lr = torch.softmax((X @ self.adaptive_lr) / self.temperature, dim=1) # [batch, units, 1, 1]
 
         # Feed
         feed = _sparse_mm_subhead(X, self.Win,  self.xwin_pos, self.win_pos, None) # [B, subM=k, 1, R]
@@ -454,7 +455,7 @@ class Memory(torch.nn.Module):
         # echo = _sparse_mm_subhead(state, W, self.xw_pos, self.w_pos, w_heads) + self.bias[w_heads] # [B, subM=k, 1, R]
 
         # Update the selected heads
-        new_state = ((1 - lr) * state) + lr * torch.tanh(feed + echo) # [B, subM=k, 1, R]
+        new_state = ((1 - self.lr) * state) + self.lr * torch.tanh(feed + echo) # [B, subM=k, 1, R]
         # heads_updated = ((1 - lr[batchs, w_heads]) * state[batchs, w_heads]) + lr[batchs, w_heads] * torch.tanh(feed + echo) # [B, subM=k, 1, R]
         # new_state = state.clone() # [B, M, 1, R]
         # new_state[batchs, w_heads] = heads_updated # [B, M, 1, R]
@@ -467,7 +468,7 @@ class Memory(torch.nn.Module):
         """
         Clamp the hyperparameters of the reservoir.
         """
-        # self.lr.data.clamp_(1e-5, 1)
+        self.lr.data.clamp_(1e-5, 1)
         self.sr.data.clamp_(1e-5, 10)
     
 
