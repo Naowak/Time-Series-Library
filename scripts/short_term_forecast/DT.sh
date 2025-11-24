@@ -12,9 +12,9 @@ python -u run.py \
   --data m4 \
   --features M \
   --num_layers 1 \
-  --memory_units 2 \
-  --memory_dim 8 \
-  --d_model 16 \
+  --memory_units 8 \
+  --memory_dim 4 \
+  --d_model 64 \
   --n_heads 1 \
   --dropout 0.1 \
   --memory_connectivity 1 \
@@ -36,9 +36,9 @@ python -u run.py \
   --data m4 \
   --features M \
   --num_layers 1 \
-  --memory_units 2 \
-  --memory_dim 8 \
-  --d_model 16 \
+  --memory_units 8 \
+  --memory_dim 4 \
+  --d_model 64 \
   --n_heads 1 \
   --dropout 0.1 \
   --memory_connectivity 1 \
@@ -60,9 +60,9 @@ python -u run.py \
   --data m4 \
   --features M \
   --num_layers 1 \
-  --memory_units 2 \
-  --memory_dim 8 \
-  --d_model 16 \
+  --memory_units 8 \
+  --memory_dim 4 \
+  --d_model 64 \
   --n_heads 1 \
   --dropout 0.1 \
   --memory_connectivity 1 \
@@ -84,9 +84,9 @@ python -u run.py \
   --data m4 \
   --features M \
   --num_layers 1 \
-  --memory_units 2 \
-  --memory_dim 8 \
-  --d_model 16 \
+  --memory_units 8 \
+  --memory_dim 4 \
+  --d_model 64 \
   --n_heads 1 \
   --dropout 0.1 \
   --memory_connectivity 1 \
@@ -108,9 +108,9 @@ python -u run.py \
   --data m4 \
   --features M \
   --num_layers 1 \
-  --memory_units 2 \
-  --memory_dim 8 \
-  --d_model 16 \
+  --memory_units 8 \
+  --memory_dim 4 \
+  --d_model 64 \
   --n_heads 1 \
   --dropout 0.1 \
   --memory_connectivity 1 \
@@ -132,9 +132,9 @@ python -u run.py \
   --data m4 \
   --features M \
   --num_layers 1 \
-  --memory_units 2 \
-  --memory_dim 8 \
-  --d_model 16 \
+  --memory_units 8 \
+  --memory_dim 4 \
+  --d_model 64 \
   --n_heads 1 \
   --dropout 0.1 \
   --memory_connectivity 1 \
