@@ -1,6 +1,7 @@
 import torch
 import numpy as np
-
+from layers.ssm_triton import ssm_triton
+from torch.utils.checkpoint import checkpoint
 
 class MemoryLayer(torch.nn.Module):
     """Implements a reservoir network."""
@@ -67,60 +68,67 @@ class MemoryLayer(torch.nn.Module):
         self.Wout_ = torch.nn.Parameter(P_inv @ Wout.to(complex_dtype)) # [M, R, D]
         # self.rmsnorm = torch.nn.RMSNorm(normalized_shape=output_dim, eps=1e-8)
 
-    def forward(self, X, state=None):
+    def forward(self, X, state=None, chunk_size=256, use_checkpoint=False):
         """
         Forward pass of the reservoir network.
         
-        Args:
+        Parameters:
         - X (torch.Tensor): Input tensor [batch, time, input_dim].
         - state (torch.Tensor, optional): Initial states [batch, units, neurons].
+        - chunk_size (int): Chunk size for triton SSM computation.
+        - use_checkpoint (bool): Whether to use gradient checkpointing.
 
         Returns:
         - new_state (torch.Tensor): Updated state [batch, time, units, neurons].
         - output (torch.Tensor): Output tensor [batch, time, units, output_dim].
         """  
-        # Extract constants from X and reshape it
+        if use_checkpoint:
+            output, new_state = checkpoint(self._forward_computation, X, state, chunk_size, use_reentrant=False)
+        else:
+            output, new_state = self._forward_computation(X, state, chunk_size)
+        
+        return output, new_state
+
+    def _forward_computation(self, X, state=None, chunk_size=256): # Chunk réduit pour Fused (meilleure occupation)
+        """
+        Version Fused & Memory Optimized.
+        """  
         batch_size = X.shape[0]
         seq_len = X.shape[1]
-        X = X.view(batch_size, seq_len, 1, 1, self.input_dim) # [B, T, 1, 1, D]
-        X_proj = torch.tanh(X @ self.proj) # [B, T, 1, 1, D] @ [M, D, D] = [B, T, M, 1, D]
-
-        # Reshape the state, if not provided, initialize it
-        if state is None:
-            state = torch.zeros(batch_size, 1, self.units, 1, self.neurons, dtype=self.complex_dtype, device=self.device) # [B, 1, M, 1, R]
-        else:
-            state = state.view(batch_size, 1, self.units, 1, self.neurons).to(self.complex_dtype) # [B, 1, M, 1, R]
-
-        # Compute lr with adaptive leak rate
-        lr_logits = X_proj @ self.adaptive_lr / self.temperature # [B, T, M, 1, 1]
-        lr = torch.softmax(lr_logits, dim=2) # [B, T, M, 1, 1]
-        Win_ = lr * self.Win_ # [B, T, M, 1, 1] * [M, D, R] = [B, T, M, D, R]
-        Lambda = self.Lambda.view(1, 1, self.units, 1, self.neurons) # [1, 1, M, 1, R]
-        Lambda = lr * Lambda + (1 - lr) # [B, T, M, 1, 1] * [1, 1, M, 1, R] = [B, T, M, 1, R]
         
-        # Compute Lambda window
-        # Lambda_window = _compute_Lambda_window(Lambda.squeeze(3)) # [B, T, T+1, M, R]
+        # 1. Projections
+        X = X.view(batch_size, seq_len, 1, 1, self.input_dim) # [B, T, 1, 1, D]
+        X_proj = torch.tanh(torch.einsum('btxyi,mio->btmyo', X, self.proj)) # [B, T, M, 1, D]
 
-        # Compute feed and concat the initial state
-        feed = X_proj.to(self.complex_dtype) @ Win_ # [B, T, M, 1, R]
-        feed = torch.cat((state, feed), dim=1) # [B, T+1, M, 1, R]
-        feed = feed.view(batch_size, 1, seq_len+1, self.units, self.neurons) # [B, 1, T+1, M, R]
+        if state is None:
+            state = torch.zeros(batch_size, self.units, self.neurons, dtype=self.complex_dtype, device=self.device) # [B, M, R]
+        
+        # 2. Calcul du Leak Rate
+        lr_proj = torch.einsum('btmxd,mdy->bmyt', X_proj, self.adaptive_lr) # [B, T, M, 1, D] @ [M, D, 1] -> [B, T, M, 1, 1] -> [B, M, 1, T]
+        lr = torch.softmax(lr_proj / self.temperature, dim=1).contiguous() # [B, M, 1, T] / [M, 1, 1] -> [B, M, 1, T]  -> [B, M, 1, T]
+        del lr_proj
 
-        # Compute echos, states and apply RMSNorm
-        # echos = (feed * Lambda_window) # [B, T, T+1, M, R]
-        # new_state = torch.sum(echos, dim=2) # [B, T, M, R] -> Sum over the echo dimension
-        Lambda_compact = _compute_Lambda_compact(Lambda.squeeze(3)) # [B, (T^2+T)/2, M, R]
-        feed = _compute_feed_compact(feed.squeeze(1)) # [B, (T^2+T)/2, M, R]
-        echos = (feed * Lambda_compact) # [B, (T^2+T)/2, M, R]
-        new_state = _compute_new_state(echos, seq_len) # [B, T, M, R]
+        # 3. Calcul de U_pre
+        u_pre = torch.einsum('btmxd,mdr->bmrt', X_proj.to(self.complex_dtype), self.Win_).contiguous() # [B, M, R, T]
+        del X_proj 
+        
+        # 4. Préparation Lambda
+        lam = self.Lambda.unsqueeze(0).expand(batch_size, -1, -1).contiguous() # [B, M, R]
 
-        # Compute the output
-        output = (new_state.unsqueeze(3) @ self.Wout_).real.to(self.dtype).squeeze(3) # [B, T, M, D]
-        output = torch.tanh(output.to(self.dtype)) # Apply activation function [B, T, M, D]
-        # output = self.rmsnorm(output) # Apply RMSNorm [B, T, M, D]
+        # 5. Préparation State
+        h_init = state.contiguous() # [B, M, R]
 
-        return output, new_state  # [B, T, M, D], [B, T, M, R]
-    
+        # 6. SSM Computation
+        new_state = ssm_triton(u_pre, lr, lam, h_init, chunk_size=chunk_size) # [B, M, R, T]
+        new_state = new_state.permute(0, 3, 1, 2) # [B, T, M, R]
+        del u_pre, lr, lam, h_init
+
+        # 7. Output Computation
+        output = torch.einsum('btmr,mro->btmo', new_state, self.Wout_).real.to(self.dtype) # [B, T, M, D]
+        output = torch.tanh(output)
+
+        return output, new_state # [B, T, M, D], [B, T, M, R]
+
     def __repr__(self):
         txt = "MemoryLayer("
         txt += f"\n  (proj): Tensor{tuple(self.proj.shape)},"
@@ -246,85 +254,3 @@ def _decompose_matrix(W):
 
     return Lambda, P, P_inv
 
-
-def _compute_Lambda_window(Lambda):
-    """
-    Compute the windowed lambda matrices for all time steps.
-
-    Args:
-        Lambda: Tensor of shape (B, T, M, R) representing eigenvalues (R) combined with adaptive leak rates for each time step.
-    Returns:
-        Lambda_window: Tensor of shape (B, T, T+1, M, R) where Lambda_window[b, t, k] = product of Lambda[b, j] for j=k to t-1
-                       and Lambda_window[b, t, t+1] = 1 (identity for the product when k=t).
-    """
-    B, T, M, R = Lambda.shape
-    Lambda_window = torch.zeros((B, T, T+1, M, R), dtype=Lambda.dtype, device=Lambda.device)
-
-    for t in range(T):
-        # Compute cumulative products for each batch and memory unit
-        Lambda_window[:, t, :t+1] = torch.cumprod(Lambda[:, :t + 1].flip(1), dim=1).flip(1)
-        Lambda_window[:, t, t+1] = 1  # Identity for the product when k=t
-
-    return Lambda_window
-
-
-def _compute_Lambda_compact(Lambda):
-    """
-    Compute the compact representation of Lambda for efficient computation.
-
-    Args:
-        Lambda: Tensor of shape (B, T, M, R) representing eigenvalues (R) combined with adaptive leak rates for each time step.
-
-    Returns:
-        Lambda_compact: Tensor of shape (B, (T^2+T)/2, M, R) representing the compacted version of Lambda.
-    """
-    B, T, M, R = Lambda.shape
-    Lambda_compact = torch.zeros((B, (T**2 + T) // 2 + T, M, R), dtype=Lambda.dtype, device=Lambda.device)
-
-    # Fill the compact representation
-    idx = 0
-    for t in range(1, T+1):
-        Lambda_compact[:, idx:idx + t] = torch.cumprod(Lambda[:, :t].flip(1), dim=1).flip(1)
-        Lambda_compact[:, idx + t] = 1  # Identity for the product when k=t
-        idx += t + 1
-
-    return Lambda_compact
-
-def _compute_feed_compact(feed):
-    """
-    Apply the compacted Lambda to the feed tensor.
-
-    Args:
-        feed: Tensor of shape (B, T+1, M, R) representing the feed inputs.
-
-    Returns:
-        new_state: Tensor of shape (B, T, M, R) representing the new states after applying Lambda.
-    """
-    B, T_plus_1, M, R = feed.shape
-    T = T_plus_1 - 1
-    feed_compact = torch.zeros((B, (T**2 + T) // 2 + T, M, R), dtype=feed.dtype, device=feed.device)
-
-    idx = 0
-    for t in range(1, T+1):
-        feed_compact[:, idx:idx + t+1] = feed[:, :t+1]
-        idx += t + 1
-
-    return feed_compact
-
-def _compute_new_state(echos, T):
-    """
-    Compute the new state from the echos tensor.
-    Args:
-        echos: Tensor of shape (B, (T^2+T)/2, M, R) representing the echos.
-    Returns:
-        new_state: Tensor of shape (B, T, M, R) representing the new states.
-    """
-    B, _, M, R = echos.shape
-    new_state = torch.zeros((B, T, M, R), dtype=echos.dtype, device=echos.device)
-
-    idx = 0
-    for t in range(T):
-        new_state[:, t] = torch.sum(echos[:, idx:idx + t + 2], dim=1)
-        idx += t + 2
-
-    return new_state

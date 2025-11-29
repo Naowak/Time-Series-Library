@@ -21,6 +21,11 @@ conda deactivate
 source tsl_venv/bin/activate
 set -x
 
+# Define triton cache to avoid user disk limitation
+export TRITON_CACHE_DIR=./triton_cache/
+mkdir -p "$TRITON_CACHE_DIR"
+echo "Triton cache directory: $TRITON_CACHE_DIR"
+
 srun --exclusive --ntasks=1 bash scripts/classification/DT.sh
 
 wait
