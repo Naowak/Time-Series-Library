@@ -63,7 +63,8 @@ class MemoryLayer(torch.nn.Module):
         self.proj = torch.nn.Parameter(proj) # [M, D, D]
         self.adaptive_lr = torch.nn.Parameter(adaptive_lr) # [M, D, 1]
         self.temperature = torch.nn.Parameter(torch.ones(units, 1, 1, dtype=dtype, device=device)) # [M, 1, 1]
-        self.Win_ = torch.nn.Buffer(Win.to(complex_dtype) @ P) # [M, D, R]
+        # self.Win_ = torch.nn.Buffer(Win.to(complex_dtype) @ P) # [M, D, R]
+        self.register_buffer('Win_', Win.to(complex_dtype) @ P)
         self.Lambda = torch.nn.Parameter(Lambda) # [M, R]
         self.Wout_ = torch.nn.Parameter(P_inv @ Wout.to(complex_dtype)) # [M, R, D]
         # self.rmsnorm = torch.nn.RMSNorm(normalized_shape=output_dim, eps=1e-8)
