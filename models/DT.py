@@ -119,13 +119,12 @@ class Model(nn.Module):
             # Project to output dimension
             dec_out = self.projection(x_out)  # [B, L, C]
             
-            # Denormalize output
+            # Denormalize predictions
             if mean_enc is not None and std_enc is not None:
-                dec_out = dec_out * (std_enc[:, :, :self.c_out].repeat(1, dec_out.shape[1], 1))
-                dec_out = dec_out + (mean_enc[:, :, :self.c_out].repeat(1, dec_out.shape[1], 1))
+                x_out = x_out * std_enc + mean_enc
             
             # Return only prediction horizon
-            return dec_out[:, -self.pred_len:, :]  # [B, pred_len, C]
+            return x_out  # [B, pred_len, D]
         
         elif self.task_name in ['imputation', 'anomaly_detection']:
             # No normalization for imputation/anomaly detection
