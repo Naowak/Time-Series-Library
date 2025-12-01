@@ -103,6 +103,7 @@ class Model(nn.Module):
         # === Pass through DynamicalTransformer ===
         if steps == 0:
             x_out = self.dynamical_transformer(x)  # [B, L, D]
+            return x_out, (mean_enc, std_enc)
 
         # Only for long forecasting tasks
         elif steps > 0: 
