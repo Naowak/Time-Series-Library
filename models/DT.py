@@ -104,18 +104,32 @@ class Model(nn.Module):
         if steps == 0:
             x_out = self.dynamical_transformer(x)  # [B, L, D]
 
-        elif steps > 0:
+        # Only for long forecasting tasks
+        elif steps > 0: 
             x_out, states = self.dynamical_transformer(x, return_state=True)  # [B, L, D], states
             state = states[:, -1, :, :].detach()  # Take last time step state for autoregressive generation
+
+            # We need to make the output projection here for the autoregressive steps
+            x_out = self.projection(x_out)  # [B, L, D]
+            # Denormalize predictions
+            if mean_enc is not None and std_enc is not None:
+                x_out = x_out * std_enc + mean_enc
 
             for step in range(steps):
                 # Autoregressive step: use last output as next input
                 last_output = x_out[:, -1:, :]  # [B, 1, D]
                 last_emb = self.embedding(last_output, None)  # [B, 1, D]
-                next_output = self.dynamical_transformer(last_emb, state)  # [B, 1, D]
+                next_output, states = self.dynamical_transformer(last_emb, state, return_state=True)  # [B, 1, D], states
+                state = states[:, -1, :, :].detach()  # Update state [B, 1, M, R]
+                # Apply output projection
+                next_output = self.projection(next_output)  # [B, 1, D]
+                # Denormalize predictions
+                if mean_enc is not None and std_enc is not None:
+                    next_output = next_output * std_enc + mean_enc
+                # Concatenate to output sequence
                 x_out = torch.cat([x_out, next_output], dim=1)  # [B, L+1, D]
 
-        return x_out, (mean_enc, std_enc) # [B, L+steps, D], (B, 1, D), (B, 1, D)
+        return x_out # [B, L+steps, D]
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
         """
@@ -136,18 +150,8 @@ class Model(nn.Module):
         if self.task_name in ['long_term_forecast']:
             # Use autoregressive steps for forecasting
             forecast_steps = self.pred_len - self.seq_len
-            
-            # Process with normalization for stable training
-            x_out, (mean_enc, std_enc) = self._dt_forward_pass(x_enc, normalize=True, steps=forecast_steps) # [B, L+pred_len, M*D]
-            
-            # Project to output dimension
-            x_out = self.projection(x_out) # [B, L+pred_len, D]
-            
-            # Denormalize predictions
-            if mean_enc is not None and std_enc is not None:
-                x_out = x_out * std_enc + mean_enc
-            
-            # Return only prediction horizon
+
+            x_out = self._dt_forward_pass(x_enc, normalize=True, steps=forecast_steps) # [B, pred_len, D]
             return x_out  # [B, pred_len, D]
         
         elif self.task_name in ['short_term_forecast']:
