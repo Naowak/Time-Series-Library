@@ -7,6 +7,13 @@ from layers.AttentionLayer import AttentionLayer
 from layers.FeedForwardLayer import FeedForwardLayer
 
 
+
+### A REVOIR
+# IL FAUT DU FC_IN 
+# IL FAUT UN MODE AUTOREGRESSIF POUR LE FORECASTING LONG TERME
+
+
+
 class Model(nn.Module):
     """
     Dynamical Transformer (DT) model adapted for Time Series Library interface
@@ -41,6 +48,7 @@ class Model(nn.Module):
         self.embedding = DataEmbedding(
             configs.enc_in, self.attention_dim, configs.embed, configs.freq, self.dropout_rate
         )
+
         
         # Core DynamicalTransformer
         self.dynamical_transformer = DynamicalTransformerCore(
@@ -66,13 +74,14 @@ class Model(nn.Module):
             # All other tasks: direct projection from attention_dim to output_dim
             self.projection = nn.Linear(self.memory_units * self.attention_dim, configs.c_out, bias=True)
     
-    def _dt_forward_pass(self, x, normalize=False):
+    def _dt_forward_pass(self, x, normalize=False, steps=0):
         """
         Core DT forward pass - shared by all tasks
         
         Args:
             x: Input tensor [B, L, D] 
             normalize: Whether to apply normalization (for forecasting)
+            steps: Number of autoregressive steps to perform (for forecasting)
             
         Returns:
             x_out: Processed tensor [B, L, D]
@@ -92,9 +101,21 @@ class Model(nn.Module):
         x = self.embedding(x, None)  # [B, L, D]
         
         # === Pass through DynamicalTransformer ===
-        x_out = self.dynamical_transformer(x)  # [B, L, D]
-        
-        return x_out, (mean_enc, std_enc)
+        if steps == 0:
+            x_out = self.dynamical_transformer(x)  # [B, L, D]
+
+        elif steps > 0:
+            x_out, states = self.dynamical_transformer(x, return_state=True)  # [B, L, D], states
+            state = states[:, -1, :, :].detach()  # Take last time step state for autoregressive generation
+
+            for step in range(steps):
+                # Autoregressive step: use last output as next input
+                last_output = x_out[:, -1:, :]  # [B, 1, D]
+                last_emb = self.embedding(last_output, None)  # [B, 1, D]
+                next_output = self.dynamical_transformer(last_emb, state)  # [B, 1, D]
+                x_out = torch.cat([x_out, next_output], dim=1)  # [B, L+1, D]
+
+        return x_out, (mean_enc, std_enc) # [B, L+steps, D], (B, 1, D), (B, 1, D)
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
         """
@@ -112,12 +133,15 @@ class Model(nn.Module):
         """
         
         # === Forecasting Tasks ===
-        if self.task_name in ['long_term_forecast', 'short_term_forecast']:
-            # Normalize input for forecasting stability
-            x_out, (mean_enc, std_enc) = self._dt_forward_pass(x_enc, normalize=True) # [B, L, M*D]
+        if self.task_name in ['long_term_forecast']:
+            # Use autoregressive steps for forecasting
+            forecast_steps = self.pred_len - self.seq_len
+            
+            # Process with normalization for stable training
+            x_out, (mean_enc, std_enc) = self._dt_forward_pass(x_enc, normalize=True, steps=forecast_steps)
             
             # Project to output dimension
-            dec_out = self.projection(x_out)  # [B, L, C]
+            x_out = self.projection(x_out)
             
             # Denormalize predictions
             if mean_enc is not None and std_enc is not None:
@@ -126,36 +150,46 @@ class Model(nn.Module):
             # Return only prediction horizon
             return x_out  # [B, pred_len, D]
         
-        elif self.task_name in ['imputation', 'anomaly_detection']:
-            # No normalization for imputation/anomaly detection
-            x_out, _ = self._dt_forward_pass(x_enc, normalize=False) # [B, L, M*D]
+        elif self.task_name in ['short_term_forecast']:
+            # Process without normalization (preserve original scale)
+            x_out, (mean_enc, std_enc) = self._dt_forward_pass(x_enc, normalize=True)
             
             # Project to output dimension
-            dec_out = self.projection(x_out)  # [B, L, C]
+            x_out = self.projection(x_out)
+
+            # Denormalize predictions
+            if mean_enc is not None and std_enc is not None:
+                x_out = x_out * std_enc + mean_enc
             
-            return dec_out  # [B, L, C]
+            return x_out[:, -self.pred_len:, :]  # [B, pred_len, D]
+        
+        # === Imputation & Anomaly Detection ===
+        elif self.task_name in ['imputation', 'anomaly_detection']:
+            # Process without normalization (preserve original scale)
+            x_out, _ = self._dt_forward_pass(x_enc, normalize=False, steps=0)
+            
+            # Project to output dimension
+            x_out = self.projection(x_out)
+            
+            return x_out  # [B, L, D]
         
         elif self.task_name == 'classification':
             # No normalization for classification
             x_out, _ = self._dt_forward_pass(x_enc, normalize=False) # [B, L, M*D]
             
             # Apply activation and dropout
-            output = self.act(x_out)  # [B, L, M*D]
-            output = self.dropout(output)
+            x_out = self.act(x_out)  # [B, L, M*D]
+            x_out = self.dropout(x_out)
             
             # Zero-out padding embeddings if available
             if x_mark_enc is not None:
-                # x_mark_enc is padding_mask with shape [B, L]
-                # We need to expand it to match [B, L, M*D]
-                padding_mask = x_mark_enc.unsqueeze(-1)  # [B, L, 1]
-                padding_mask = padding_mask.expand(-1, -1, output.shape[-1])  # [B, L, M*D]
-                output = output * padding_mask  # [B, L, M*D]
+                x_out = x_out * x_mark_enc.unsqueeze(-1)  # [B, L, M*D]
             
             # Flatten and classify
-            output = output.reshape(output.shape[0], -1)  # [B, L*M*D]
-            output = self.projection(output)  # [B, num_classes]
+            x_out = x_out.reshape(x_out.shape[0], -1)  # [B, L*M*D]
+            x_out = self.projection(x_out)  # [B, num_classes]
             
-            return output
+            return x_out
         
         raise ValueError(f"Unsupported task: {self.task_name}")
 
@@ -267,11 +301,6 @@ class DynamicalTransformerCore(nn.Module):
             else:
                 raise ValueError("Unknown layer type in DynamicalTransformer.")
 
-        # # Output is the mean over memory units
-        # if len(step.shape) == 4:  # (B, T, M, D)
-        #     output = step.mean(dim=2)  # (B, T, D)
-        # else:
-        #     output = step
         output = step.reshape(step.shape[0], step.shape[1], -1)  # (B, T, M*D)
 
         if return_state:
