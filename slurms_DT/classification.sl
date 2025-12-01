@@ -15,16 +15,22 @@
 # Charger les modules nécessaires
 module purge
 module load arch/a100
-module load miniforge/24.9.0
-conda deactivate
+#module load miniforge/24.9.0
+#conda deactivate
 # conda activate 
-source tsl_venv/bin/activate
+module load python-3.11.5
+source mvenv/bin/activate
 set -x
 
 # Define triton cache to avoid user disk limitation
-export TRITON_CACHE_DIR=./triton_cache/
+export TRITON_CACHE_DIR="./triton_cache/"
 mkdir -p "$TRITON_CACHE_DIR"
 echo "Triton cache directory: $TRITON_CACHE_DIR"
+
+# Define TMPDIR to a location with more space
+export TMPDIR="./tmp/"
+mkdir -p "$TMPDIR"
+echo "Temporary directory: $TMPDIR"
 
 srun --exclusive --ntasks=1 bash scripts/classification/DT.sh
 

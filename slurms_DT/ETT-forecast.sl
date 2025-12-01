@@ -15,10 +15,11 @@
 # Charger les modules nécessaires
 module purge
 module load arch/a100
-module load miniforge/24.9.0
-conda deactivate
+#module load miniforge/24.9.0
+#conda deactivate
 # conda activate 
-source tsl_venv/bin/activate
+module load python-3.11.5
+source mvenv/bin/activate
 set -x
 
 # Define triton cache to avoid user disk limitation
