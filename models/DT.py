@@ -110,7 +110,7 @@ class Model(nn.Module):
 
             for step in range(steps):
                 # Autoregressive step: use last output as next input
-                last_output = x_out[:, -1:, :]  # [B, 1, D]
+                last_output = x_out[:, -1, :]  # [B, 1, D]
                 last_emb = self.embedding(last_output, None)  # [B, 1, D]
                 next_output = self.dynamical_transformer(last_emb, state)  # [B, 1, D]
                 x_out = torch.cat([x_out, next_output], dim=1)  # [B, L+1, D]
@@ -138,10 +138,10 @@ class Model(nn.Module):
             forecast_steps = self.pred_len - self.seq_len
             
             # Process with normalization for stable training
-            x_out, (mean_enc, std_enc) = self._dt_forward_pass(x_enc, normalize=True, steps=forecast_steps)
+            x_out, (mean_enc, std_enc) = self._dt_forward_pass(x_enc, normalize=True, steps=forecast_steps) # [B, L+pred_len, M*D]
             
             # Project to output dimension
-            x_out = self.projection(x_out)
+            x_out = self.projection(x_out) # [B, L+pred_len, D]
             
             # Denormalize predictions
             if mean_enc is not None and std_enc is not None:
