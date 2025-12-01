@@ -110,7 +110,7 @@ class Model(nn.Module):
 
             for step in range(steps):
                 # Autoregressive step: use last output as next input
-                last_output = x_out[:, -1, :]  # [B, 1, D]
+                last_output = x_out[:, -1:, :]  # [B, 1, D]
                 last_emb = self.embedding(last_output, None)  # [B, 1, D]
                 next_output = self.dynamical_transformer(last_emb, state)  # [B, 1, D]
                 x_out = torch.cat([x_out, next_output], dim=1)  # [B, L+1, D]
